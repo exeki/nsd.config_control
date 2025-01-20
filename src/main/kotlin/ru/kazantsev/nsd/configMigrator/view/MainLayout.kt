@@ -1,4 +1,4 @@
-package ru.kazantsev.sportiksmonitor.view
+package ru.kazantsev.nsd.configMigrator.view
 
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle
@@ -18,7 +18,8 @@ class MainLayout : AppLayout() {
     }
 
     private fun createHeader() {
-        val logo = H1("Vaadin CRM")
+        val logo = H1("NSD Config Migrator")
+
         logo.addClassNames(
             LumoUtility.FontSize.LARGE,
             LumoUtility.Margin.MEDIUM

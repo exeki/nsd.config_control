@@ -6,7 +6,7 @@ import ru.kazantsev.nsd.configMigrator.data.model.enums.MigrationState
 import ru.kazantsev.sportiksmonitor.data.model.AbstractEntity
 
 @Entity
- class MigrationLog protected constructor() : AbstractEntity(){
+ open class MigrationLog protected constructor() : AbstractEntity(){
     @ManyToOne
     lateinit var from: Installation
     @ManyToOne
@@ -17,7 +17,9 @@ import ru.kazantsev.sportiksmonitor.data.model.AbstractEntity
     var toBackup : ConfigBackup? = null
 
     var overrideAll : Boolean = false
-    var state : MigrationState = MigrationState.NOT_STARTED
+
+    var state : MigrationState = MigrationState.IN_PROGRESS
+
     var errorText : String? = null
 
     constructor(from: Installation, to: Installation, overrideAll : Boolean) : this() {

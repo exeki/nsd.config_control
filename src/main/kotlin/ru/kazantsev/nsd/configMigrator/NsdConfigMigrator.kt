@@ -9,11 +9,8 @@ class NsdConfigMigrator {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            appContext = runApplication<NsdConfigMigrator>(*args)
+            runApplication<NsdConfigMigrator>(*args)
         }
-
-        @JvmStatic
-        lateinit var appContext : ConfigurableApplicationContext
     }
 }
 

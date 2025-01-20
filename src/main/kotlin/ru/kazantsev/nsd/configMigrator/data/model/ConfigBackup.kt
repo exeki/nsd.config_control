@@ -7,23 +7,20 @@ import ru.kazantsev.sportiksmonitor.data.model.AbstractEntity
 import java.time.LocalDateTime
 
 @Entity
- class ConfigBackup protected constructor() : AbstractEntity() {
+open class ConfigBackup protected constructor() : AbstractEntity() {
+
     @ManyToOne
     lateinit var installation: Installation
-    val creationDate: LocalDateTime = LocalDateTime.now()
     lateinit var type: ConfigBackupType
-    lateinit var downloadLink : String
-    lateinit var fileId : String
+    lateinit var configFileContent: String
 
     constructor(
         inst : Installation,
         type: ConfigBackupType,
-        downloadLink : String,
-        fileId : String
+        configFileContent : String
     ) : this() {
         this.installation = inst
         this.type = type
-        this.downloadLink = downloadLink
-        this.fileId = fileId
+        this.configFileContent = configFileContent
     }
 }

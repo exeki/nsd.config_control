@@ -1,4 +1,4 @@
-package ru.kazantsev.sportiksmonitor.view.components
+package ru.kazantsev.nsd.configMigrator.view.components
 
 import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.html.NativeLabel

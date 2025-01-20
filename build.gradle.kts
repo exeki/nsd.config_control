@@ -38,6 +38,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("com.vaadin:vaadin-spring-boot-starter")
+    implementation("org.postgresql:postgresql:42.6.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 

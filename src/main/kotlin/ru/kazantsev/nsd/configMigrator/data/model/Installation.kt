@@ -8,17 +8,15 @@ import ru.kazantsev.sportiksmonitor.data.model.AbstractEntity
 
 @Entity
 class Installation protected constructor() : AbstractEntity() {
-    val creationDate: LocalDateTime = LocalDateTime.now()
-    lateinit var updateDate: LocalDateTime
-    lateinit var protocol: String
 
+    lateinit var protocol: String
     //TODO сделать уникальным
     lateinit var host: String
     lateinit var accessKey: String
     var appVersion: String? = null
     var groovyVersion: String? = null
     var archived: Boolean = false
-    var backupConfigWhileMigration = true
+    //var backupConfigWhileMigration = true
 
     @ManyToOne
     var lastFromMigrationLog: MigrationLog? = null

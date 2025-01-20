@@ -1,6 +1,10 @@
 package ru.kazantsev.sportiksmonitor.data.model
 
 import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.LocalDateTime
+
 
 @MappedSuperclass
 abstract class AbstractEntity {
@@ -8,9 +12,15 @@ abstract class AbstractEntity {
     @GeneratedValue(
         strategy = GenerationType.SEQUENCE,
         generator = "idgenerator"
-    ) // The initial value is to account for data.sql demo data ids
+    )
     @SequenceGenerator(name = "idgenerator", initialValue = 1000)
     open var id: Long? = null
+
+    @CreatedDate
+    var createdDate: LocalDateTime = LocalDateTime.now()
+
+    @LastModifiedDate
+    var lastModifiedDate: LocalDateTime = LocalDateTime.now()
 
     @Version
     open val version: Int = 0
