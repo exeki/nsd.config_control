@@ -1,11 +1,10 @@
-package ru.kazantsev.nsd.configMigrator.view.components
+package ru.kazantsev.nsd.configMigrator.ui.components
 
-import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.html.NativeLabel
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 
-
+@Deprecated("Мусор?")
 class Card(private val title: String, private val description: String) :
     VerticalLayout() {
     init {
@@ -15,7 +14,6 @@ class Card(private val title: String, private val description: String) :
     private fun createCard() {
         isSpacing = false
         setSizeFull()
-
 
         val titleLabel = NativeLabel(title)
         titleLabel.style.set("font-size", "1.2em")

@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import ru.kazantsev.nsd.basic_api_connector.Connector
+import ru.kazantsev.nsd.basic_api_connector.ConnectorParams
 import ru.kazantsev.nsd.configMigrator.data.model.Installation
 import ru.kazantsev.nsd.configMigrator.data.model.MigrationLog
 import ru.kazantsev.nsd.configMigrator.data.model.MigrationPath
@@ -25,6 +27,22 @@ class InstallationService(
 
     val logger: Logger = LoggerFactory.getLogger(InstallationService::class.java)
 
+    fun getConnectorParamsForInstallation(installation: Installation): ConnectorParams {
+        return ConnectorParams(
+            installation.host,
+            installation.protocol,
+            installation.host,
+            installation.accessKey,
+            true
+        )
+    }
+
+    fun getConnectorForInstallation(installation: Installation): Connector {
+        val params = getConnectorParamsForInstallation(installation)
+        val con = Connector(params)
+        return con
+    }
+
     @Transactional
     fun updateInstallation(inst: Installation): Installation {
         val con = connectorService.getConnectorForInstallation(inst)
@@ -42,15 +60,13 @@ class InstallationService(
         toBackup: Boolean
     ): MigrationLog {
         val log = MigrationLog(from, to, overrideAll)
-        from.lastFromMigrationLog = log
-        to.lastToMigrationLog = log
         try {
             val con = connectorService.getConnectorForInstallation(from)
             var config : String? = null
             if (fromBackup) {
                 val a  = cbService.fetchAndCreateBackup(from, ConfigBackupType.DURING_MIGRATION_FROM)
                 log.fromBackup = a
-                config = a.configFileContent
+                config = a.configFile.getContentAsString()
             }
             else config = con.metainfo()
             if (toBackup) log.toBackup = cbService.fetchAndCreateBackup(to, ConfigBackupType.DURING_MIGRATION_TO)

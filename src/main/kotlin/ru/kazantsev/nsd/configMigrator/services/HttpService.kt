@@ -11,6 +11,7 @@ import ru.kazantsev.nsd.configMigrator.data.model.Installation
 
 
 @Service
+@Deprecated(message = "не нужон")
 class HttpService {
 
     companion object {

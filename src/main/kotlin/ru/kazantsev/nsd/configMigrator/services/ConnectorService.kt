@@ -22,13 +22,21 @@ class ConnectorService(val objectMapper: ObjectMapper) {
     }
 
     fun getConnectorForInstallation(installation: Installation): Connector {
-        var con = connectorMap.get(installation.host)
+        val params = getConnectorParamsForInstallation(installation)
+        val con = Connector(params)
+        con.setObjectMapper(objectMapper)
+        connectorMap[installation.host] = con
+        return con
+    }
+
+    fun getConnectorForInstallationOld(installation: Installation): Connector {
+        var con = connectorMap[installation.host]
         if (con != null) return con
         else {
             val params = getConnectorParamsForInstallation(installation)
             con = Connector(params)
             con.setObjectMapper(objectMapper)
-            connectorMap.put(installation.host, con)
+            connectorMap[installation.host] = con
             return con
         }
     }

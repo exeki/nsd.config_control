@@ -1,26 +1,27 @@
 package ru.kazantsev.nsd.configMigrator.data.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import ru.kazantsev.nsd.configMigrator.data.model.enums.ConfigBackupType
-import ru.kazantsev.sportiksmonitor.data.model.AbstractEntity
-import java.time.LocalDateTime
+import ru.kazantsev.nsd.configMigrator.services.enum_converter.ConfigBackupTypeConverter
+import java.time.format.DateTimeFormatter
 
 @Entity
-open class ConfigBackup protected constructor() : AbstractEntity() {
+class ConfigBackup () : AbstractEntity() {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     lateinit var installation: Installation
+    @Convert(converter = ConfigBackupTypeConverter::class)
     lateinit var type: ConfigBackupType
-    lateinit var configFileContent: String
+    @ManyToOne(fetch = FetchType.LAZY)
+    lateinit var configFile: DBFile
 
-    constructor(
-        inst : Installation,
-        type: ConfigBackupType,
-        configFileContent : String
-    ) : this() {
-        this.installation = inst
+    val title: String
+        get() = installation.host + '_' + createdDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
+
+    constructor(installation : Installation, type : ConfigBackupType, configFile: DBFile) : this() {
+        this.installation = installation
         this.type = type
-        this.configFileContent = configFileContent
+        this.configFile = configFile
     }
+
 }

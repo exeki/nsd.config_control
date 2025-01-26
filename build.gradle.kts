@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
+    kotlin("plugin.allopen") version "2.1.0"
     id("org.springframework.boot") version "3.3.6"
     id("io.spring.dependency-management") version "1.1.6"
     id("com.vaadin") version "24.5.5"
@@ -13,6 +14,13 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+allOpen {
+    annotations(
+        "jakarta.persistence.MappedSuperclass",
+        "jakarta.persistence.Entity"
+    )
 }
 
 repositories {

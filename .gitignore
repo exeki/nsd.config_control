@@ -40,3 +40,4 @@ out/
 ### Kotlin ###
 .kotlin
 /src/main/frontend/
+/package-lock.json

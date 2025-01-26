@@ -1,4 +1,4 @@
-package ru.kazantsev.sportiksmonitor.data.model
+package ru.kazantsev.nsd.configMigrator.data.model
 
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
@@ -14,7 +14,7 @@ abstract class AbstractEntity {
         generator = "idgenerator"
     )
     @SequenceGenerator(name = "idgenerator", initialValue = 1000)
-    open var id: Long? = null
+    var id: Long? = null
 
     @CreatedDate
     var createdDate: LocalDateTime = LocalDateTime.now()
@@ -23,7 +23,7 @@ abstract class AbstractEntity {
     var lastModifiedDate: LocalDateTime = LocalDateTime.now()
 
     @Version
-    open val version: Int = 0
+    val version: Int = 0
 
     override fun hashCode(): Int {
         if (id != null) {
