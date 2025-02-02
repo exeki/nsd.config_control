@@ -15,15 +15,15 @@ import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 
 @UIScope
 @VaadinSessionScope
-@Route(value = "404", layout = MainLayout::class)
+@Route(value = "403", layout = MainLayout::class)
 @PermitAll
-class Error404 : VerticalLayout() {
+class Error403 : VerticalLayout(){
     init {
         setSizeFull()
         alignItems = FlexComponent.Alignment.CENTER
         add(
-            H2("404 Not Found"),
-            H3("Ты попытался сходить в никуда"),
+            H2("403 Forbidden"),
+            H3("Ты просишь без уважения"),
             Button("На главную") { _ -> UI.getCurrent().navigate(InstallationListView::class.java) }
         )
     }

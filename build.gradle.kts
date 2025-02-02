@@ -44,19 +44,23 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    implementation("com.vaadin:vaadin-spring-boot-starter")
-    implementation("org.postgresql:postgresql:42.6.0")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-
-    implementation("ru.kazantsev.nsd:basic_api_connector:1.1.1")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    //implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.postgresql:postgresql:42.7.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    runtimeOnly("com.h2database:h2")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("com.vaadin:vaadin-spring-boot-starter")
+    implementation("ru.kazantsev.nsd:basic_api_connector:1.1.1")
 
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+
+    //runtimeOnly("com.h2database:h2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
 }
 
 dependencyManagement {

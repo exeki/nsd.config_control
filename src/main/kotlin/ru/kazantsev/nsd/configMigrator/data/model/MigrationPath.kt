@@ -5,7 +5,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.ManyToOne
 
 @Entity
-class MigrationPath constructor() : AbstractEntity() {
+class MigrationPath () : AbstractEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
     lateinit var from: Installation
     var fromBackup: Boolean = false

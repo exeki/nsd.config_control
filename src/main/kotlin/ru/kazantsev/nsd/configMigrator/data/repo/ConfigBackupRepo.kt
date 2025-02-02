@@ -9,4 +9,5 @@ import ru.kazantsev.nsd.configMigrator.data.model.Installation
 interface ConfigBackupRepo : PagingAndSortingRepository<ConfigBackup, Long>, CrudRepository<ConfigBackup, Long> {
     @Transactional
     fun findByInstallation(inst : Installation) : List<ConfigBackup>
+    fun findByInstallationAndKeyIs(installation: Installation, key : Boolean) : List<ConfigBackup>
 }

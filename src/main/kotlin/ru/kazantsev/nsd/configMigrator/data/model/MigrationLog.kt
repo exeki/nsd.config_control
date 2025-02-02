@@ -8,7 +8,7 @@ import ru.kazantsev.nsd.configMigrator.data.model.enums.MigrationState
 import ru.kazantsev.nsd.configMigrator.services.enum_converter.MigrationStateConverter
 
 @Entity
-class MigrationLog constructor() : AbstractEntity() {
+class MigrationLog () : AbstractEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
     lateinit var from: Installation
 

@@ -25,6 +25,8 @@ abstract class AbstractEntity {
     @Version
     val version: Int = 0
 
+    var archived: Boolean = false
+
     override fun hashCode(): Int {
         if (id != null) {
             return id.hashCode()

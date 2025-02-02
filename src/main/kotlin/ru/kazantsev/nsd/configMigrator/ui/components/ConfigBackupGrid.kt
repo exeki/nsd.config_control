@@ -1,13 +1,10 @@
 package ru.kazantsev.nsd.configMigrator.ui.components
 
 import com.vaadin.flow.component.UI
-import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.data.provider.ListDataProvider
-import com.vaadin.flow.data.renderer.ComponentRenderer
 import ru.kazantsev.nsd.configMigrator.data.model.ConfigBackup
-import ru.kazantsev.nsd.configMigrator.ui.views.ConfigBackupView
-import ru.kazantsev.nsd.configMigrator.ui.views.InstallationView
+import ru.kazantsev.nsd.configMigrator.ui.views.`object`.ConfigBackupView
 
 @Deprecated("Легче сделать на месте")
 class ConfigBackupGrid(

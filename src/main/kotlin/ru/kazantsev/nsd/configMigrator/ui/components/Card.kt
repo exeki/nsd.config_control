@@ -4,14 +4,12 @@ import com.vaadin.flow.component.html.NativeLabel
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 
-@Deprecated("Мусор?")
-class Card(private val title: String, private val description: String) :
-    VerticalLayout() {
-    init {
-        createCard()
-    }
+class Card(
+    private val title: String,
+    private val description: String
+) : VerticalLayout() {
 
-    private fun createCard() {
+    init {
         isSpacing = false
         setSizeFull()
 

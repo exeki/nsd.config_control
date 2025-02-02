@@ -14,7 +14,9 @@ class ConfigBackup () : AbstractEntity() {
     lateinit var type: ConfigBackupType
     @ManyToOne(fetch = FetchType.LAZY)
     lateinit var configFile: DBFile
-
+    var note : String? = null
+    //Ключевой бекап
+    var key : Boolean = false
     val title: String
         get() = installation.host + '_' + createdDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
 

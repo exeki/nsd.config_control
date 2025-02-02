@@ -1,5 +1,6 @@
 package ru.kazantsev.nsd.configMigrator.ui.components
 
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.router.RouterLink
@@ -28,6 +29,7 @@ class PropertyField(private val propertyName: String, private val propertyValue:
                 is Date -> add(Span(dateFormat.format(propertyValue)))
                 is Boolean -> add(Span(if (propertyValue) "Да" else "Нет"))
                 is RouterLink -> add(propertyValue)
+                is Component -> add(propertyValue)
                 else -> add(Span(propertyValue?.toString()))
             }
         }

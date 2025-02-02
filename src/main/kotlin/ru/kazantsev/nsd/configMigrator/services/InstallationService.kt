@@ -61,17 +61,15 @@ class InstallationService(
     ): MigrationLog {
         val log = MigrationLog(from, to, overrideAll)
         try {
-            val con = connectorService.getConnectorForInstallation(from)
-            var config : String? = null
+            val toCon = connectorService.getConnectorForInstallation(to)
+            val config: String?
             if (fromBackup) {
-                val a  = cbService.fetchAndCreateBackup(from, ConfigBackupType.DURING_MIGRATION_FROM)
-                log.fromBackup = a
-                config = a.configFile.getContentAsString()
-            }
-            else config = con.metainfo()
+                log.fromBackup = cbService.fetchAndCreateBackup(from, ConfigBackupType.DURING_MIGRATION_FROM)
+                config = log.fromBackup!!.configFile.getContentAsString()
+            } else config = connectorService.getConnectorForInstallation(from).metainfo()
             if (toBackup) log.toBackup = cbService.fetchAndCreateBackup(to, ConfigBackupType.DURING_MIGRATION_TO)
             try {
-                con.uploadMetainfo(config, 1000)
+                toCon.uploadMetainfo(config, 1000)
             } catch (ignored: SocketTimeoutException) {
                 logger.info("Словил SocketTimeoutException при отправке метаинфы. This is fine...")
             }

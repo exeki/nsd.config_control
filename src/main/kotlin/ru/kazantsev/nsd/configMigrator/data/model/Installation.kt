@@ -2,6 +2,9 @@ package ru.kazantsev.nsd.configMigrator.data.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.ManyToMany
+import jakarta.validation.constraints.NotBlank
 
 @Entity
 class Installation() : AbstractEntity() {
@@ -9,20 +12,17 @@ class Installation() : AbstractEntity() {
     var protocol: String = ""
 
     @Column(unique = true)
+    @NotBlank
     var host: String = ""
+    @NotBlank
+    //TODO каждому пользователю свой ключ до конкретной инсталляции
     var accessKey: String = ""
     var appVersion: String? = null
     var groovyVersion: String? = null
-    var archived: Boolean = false
-    //var backupConfigWhileMigration = true
+    var important : Boolean = false
 
-    //TODO передалать не не хранимый атрибут
-    //@ManyToOne
-    //var lastFromMigrationLog: MigrationLog? = null
-
-    //TODO передалать не не хранимый атрибут
-    //@ManyToOne
-    //var lastToMigrationLog: MigrationLog? = null
+    @ManyToMany(fetch = FetchType.LAZY)
+    var groups : MutableSet<InstallationGroup> = mutableSetOf()
 
     constructor(
         protocol: String,
