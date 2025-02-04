@@ -1,7 +1,8 @@
-package ru.kazantsev.nsd.configMigrator.security
+package ru.kazantsev.nsd.configMigrator.services
 
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.UserDetailsManager
 import org.springframework.stereotype.Component
 import ru.kazantsev.nsd.configMigrator.data.model.User
@@ -12,10 +13,11 @@ import ru.kazantsev.nsd.configMigrator.exception.AuthorityNotFoundException
 @Component
 class UserDetailsManagerImpl(
     private val userRepo: UserRepo,
-    private val userAuthorityRepo: UserAuthorityRepo
+    private val userAuthorityRepo: UserAuthorityRepo,
+    private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsManager {
 
-    override fun loadUserByUsername(username: String): UserDetails {
+    override fun loadUserByUsername(username: String): User {
         return loadUserDataByUsername(username)
     }
 
@@ -24,9 +26,12 @@ class UserDetailsManagerImpl(
     }
 
     override fun createUser(userDetails: UserDetails) {
-        val user = User().apply {
+        val user = if (userDetails is User) userDetails.apply {
+            password = passwordEncoder.encode(userDetails.password)
+        }
+        else User().apply {
             username = userDetails.username
-            password = userDetails.password
+            password = passwordEncoder.encode(userDetails.password)
             isEnabled = userDetails.isEnabled
             isAccountNonLocked = userDetails.isAccountNonLocked
             isCredentialsNonExpired = userDetails.isCredentialsNonExpired
@@ -63,6 +68,7 @@ class UserDetailsManagerImpl(
         userRepo.delete(user)
     }
 
+    @Deprecated("Это нельзя использовать")
     override fun changePassword(oldPassword: String?, newPassword: String?) {
         throw RuntimeException("Как вообще нахуй имплементировать этот гениальный метод changePassword")
     }

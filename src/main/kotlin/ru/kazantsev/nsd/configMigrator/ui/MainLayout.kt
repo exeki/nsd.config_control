@@ -3,17 +3,18 @@ package ru.kazantsev.nsd.configMigrator.ui
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle
 import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H1
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.dom.Style
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility
 import ru.kazantsev.nsd.configMigrator.services.SecurityService
-import ru.kazantsev.nsd.configMigrator.ui.views.InstallationListView
-import ru.kazantsev.nsd.configMigrator.ui.views.MainView
-import ru.kazantsev.nsd.configMigrator.ui.views.SchedulerListView
-import ru.kazantsev.nsd.configMigrator.ui.views.TestView
+import ru.kazantsev.nsd.configMigrator.ui.components.BoldSpan
+import ru.kazantsev.nsd.configMigrator.ui.views.*
 
 class MainLayout(
     private val securityService: SecurityService
@@ -33,16 +34,30 @@ class MainLayout(
         )
 
         val header = HorizontalLayout(DrawerToggle(), logo).apply {
+
             defaultVerticalComponentAlignment = FlexComponent.Alignment.CENTER
             setWidthFull()
             addClassNames(
                 LumoUtility.Padding.Vertical.NONE,
-                LumoUtility.Padding.Horizontal.MEDIUM
+                LumoUtility.Padding.Horizontal.SMALL
             )
-            if (securityService.authenticatedUser != null) {
-                val logout = Button("Выйти") { securityService.logout() }
-                add(logout)
-            }
+            add(
+                HorizontalLayout().apply {
+                    style.setPosition(Style.Position.ABSOLUTE)
+                    style.setRight("10px")
+                    this.justifyContentMode = FlexComponent.JustifyContentMode.END
+                    val user = securityService.authenticatedUser
+                    if (user != null) {
+                        val span = BoldSpan(user.fullName)
+                        this.add(span)
+                        setAlignSelf(FlexComponent.Alignment.CENTER, span)
+                        val logout = Button("Выйти") { securityService.logout() }
+                        this.add(logout)
+                        setAlignSelf(FlexComponent.Alignment.CENTER, logout)
+                    }
+                }
+            )
+
         }
 
         addToNavbar(header)
@@ -59,6 +74,7 @@ class MainLayout(
                 RouterLink("Планировщики TODO", SchedulerListView::class.java),
                 RouterLink("Аудит лог TODO", MainView::class.java),
                 RouterLink("Релизы и скрипты TODO", MainView::class.java),
+                RouterLink("Пользователи", UsersListView::class.java),
                 RouterLink("ТЕСТ", TestView::class.java),
             )
         )

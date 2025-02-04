@@ -1,5 +1,6 @@
 package ru.kazantsev.nsd.configMigrator.init
 
+import jakarta.transaction.Transactional
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
@@ -10,19 +11,20 @@ import ru.kazantsev.nsd.configMigrator.data.repo.InstallationRepo
 import ru.kazantsev.nsd.configMigrator.services.InstallationService
 
 @Component
-class CreateTestData  (
+class CreateTestData(
     val installationRepo: InstallationRepo,
     val installationService: InstallationService,
     val installationGroupRepo: InstallationGroupRepo
 ) : ApplicationRunner {
 
+    @Transactional
     override fun run(args: ApplicationArguments?) {
-        createTestInstallations()
         createTestGroups()
+        createTestInstallations()
     }
 
-    fun createTestGroups(){
-        if(installationGroupRepo.count() == 0.toLong()) {
+    fun createTestGroups() {
+        if (installationGroupRepo.count() == 0.toLong()) {
             val group1 = InstallationGroup(
                 "GREEN",
                 "green"
@@ -41,8 +43,8 @@ class CreateTestData  (
         }
     }
 
-    fun createTestInstallations(){
-        if(installationRepo.count() == 0.toLong()) {
+    fun createTestInstallations() {
+        if (installationRepo.count() == 0.toLong()) {
 
             val groups = installationGroupRepo.findAll().toList()
 

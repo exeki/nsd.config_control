@@ -7,6 +7,7 @@ import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.spring.annotation.UIScope
 import com.vaadin.flow.spring.annotation.VaadinSessionScope
+import jakarta.annotation.security.PermitAll
 import ru.kazantsev.nsd.configMigrator.data.model.Scheduler
 import ru.kazantsev.nsd.configMigrator.data.repo.SchedulerRepo
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
@@ -16,6 +17,7 @@ import ru.kazantsev.nsd.configMigrator.ui.views.error.Error404
 @UIScope
 @VaadinSessionScope
 @Route(value = "scheduler", layout = MainLayout::class)
+@PermitAll
 class SchedulerView(
     private val schedulerRepo: SchedulerRepo
 ) : VerticalLayout(), HasUrlParameter<Long> {

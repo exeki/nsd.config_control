@@ -3,14 +3,17 @@ package ru.kazantsev.nsd.configMigrator.data.model
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.ManyToOne
+import jakarta.validation.constraints.NotNull
 
 @Entity
 class MigrationPath () : AbstractEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     lateinit var from: Installation
     var fromBackup: Boolean = false
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     lateinit var to: Installation
     var toBackup: Boolean = false
     var overrideAll: Boolean = false

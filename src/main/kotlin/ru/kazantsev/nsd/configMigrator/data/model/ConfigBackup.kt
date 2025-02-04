@@ -1,6 +1,7 @@
 package ru.kazantsev.nsd.configMigrator.data.model
 
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotNull
 import ru.kazantsev.nsd.configMigrator.data.model.enums.ConfigBackupType
 import ru.kazantsev.nsd.configMigrator.services.enum_converter.ConfigBackupTypeConverter
 import java.time.format.DateTimeFormatter
@@ -9,10 +10,13 @@ import java.time.format.DateTimeFormatter
 class ConfigBackup () : AbstractEntity() {
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     lateinit var installation: Installation
     @Convert(converter = ConfigBackupTypeConverter::class)
+    @NotNull
     lateinit var type: ConfigBackupType
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     lateinit var configFile: DBFile
     var note : String? = null
     //Ключевой бекап

@@ -7,4 +7,5 @@ import java.util.*
 
 interface UserRepo : PagingAndSortingRepository<User, Long>, CrudRepository<User, Long> {
     fun findByUsername(username: String): Optional<User>
+    fun findByArchivedIs(archived: Boolean): MutableList<User>
 }

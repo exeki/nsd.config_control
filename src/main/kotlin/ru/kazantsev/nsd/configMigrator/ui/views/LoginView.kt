@@ -12,29 +12,14 @@ import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.auth.AnonymousAllowed
 import org.slf4j.LoggerFactory
 import org.springframework.security.provisioning.UserDetailsManager
+import kotlin.math.log
 
 @Route("login")
 @PageTitle("Login | NSD CC")
 @AnonymousAllowed
-
-class LoginView (
-    private val userDetailsManager: UserDetailsManager,
-) : VerticalLayout(), BeforeEnterObserver {
+class LoginView: VerticalLayout(), BeforeEnterObserver {
 
     private val logger = LoggerFactory.getLogger(LoginView::class.java)
-
-    init {
-        logger.warn("userDetailsManager class: " + userDetailsManager::class.java.name)
-        if(userDetailsManager.userExists("admin")){
-            logger.warn("admin СУЩЕСТВУЕТ, пароль: " +
-            userDetailsManager.loadUserByUsername("admin")!!.password)
-        }
-        if(userDetailsManager.userExists("user")){
-            logger.warn("user СУЩЕСТВУЕТ, пароль: " +
-                    userDetailsManager.loadUserByUsername("user")!!.password)
-        }
-        userDetailsManager
-    }
 
     private val loginForm = LoginForm().apply {
         alignItems = FlexComponent.Alignment.CENTER

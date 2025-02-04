@@ -12,6 +12,7 @@ import com.vaadin.flow.component.treegrid.TreeGrid
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.spring.annotation.UIScope
 import com.vaadin.flow.spring.annotation.VaadinSessionScope
+import jakarta.annotation.security.PermitAll
 import ru.kazantsev.nsd.configMigrator.data.model.Installation
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 
@@ -19,6 +20,7 @@ import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 @UIScope
 @VaadinSessionScope
 @Route(value = "test", layout = MainLayout::class)
+@PermitAll
 class TestView : VerticalLayout() {
 
     private fun createButtonVariant(variant: ButtonVariant): Button {

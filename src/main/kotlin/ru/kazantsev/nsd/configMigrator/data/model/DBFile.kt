@@ -1,12 +1,15 @@
 package ru.kazantsev.nsd.configMigrator.data.model
 
 import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
 import java.nio.charset.Charset
 
 @Entity
 class DBFile() : AbstractEntity() {
 
+    @NotBlank
     lateinit var fileName: String
+    @NotBlank
     lateinit  var fileType: String
     @Lob
     @Basic(fetch = FetchType.LAZY)

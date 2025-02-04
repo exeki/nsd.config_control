@@ -7,6 +7,7 @@ import com.vaadin.flow.router.HasUrlParameter
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.spring.annotation.UIScope
 import com.vaadin.flow.spring.annotation.VaadinSessionScope
+import jakarta.annotation.security.PermitAll
 import ru.kazantsev.nsd.configMigrator.data.model.MigrationPath
 import ru.kazantsev.nsd.configMigrator.data.repo.MigrationPathRepo
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
@@ -16,6 +17,7 @@ import ru.kazantsev.nsd.configMigrator.ui.views.error.Error404
 @UIScope
 @VaadinSessionScope
 @Route(value = "migration_path", layout = MainLayout::class)
+@PermitAll
 class MigrationPathView  (
     private val migrationPathRepo: MigrationPathRepo
 ) : VerticalLayout(), HasUrlParameter<Long> {
