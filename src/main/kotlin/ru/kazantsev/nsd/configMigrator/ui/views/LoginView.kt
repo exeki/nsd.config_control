@@ -1,4 +1,3 @@
-
 package ru.kazantsev.nsd.configMigrator.ui.views
 
 import com.vaadin.flow.component.login.LoginForm
@@ -11,13 +10,12 @@ import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.auth.AnonymousAllowed
 import org.slf4j.LoggerFactory
-import org.springframework.security.provisioning.UserDetailsManager
-import kotlin.math.log
+import ru.kazantsev.nsd.configMigrator.services.SecurityService
 
 @Route("login")
 @PageTitle("Login | NSD CC")
 @AnonymousAllowed
-class LoginView: VerticalLayout(), BeforeEnterObserver {
+class LoginView : VerticalLayout(), BeforeEnterObserver {
 
     private val logger = LoggerFactory.getLogger(LoginView::class.java)
 
@@ -31,11 +29,11 @@ class LoginView: VerticalLayout(), BeforeEnterObserver {
                     username = "Имя пользователя"
                     password = "Пароль"
                     submit = "Войти?"
-                    forgotPassword = "Забыл пароль"
+                    isForgotPasswordButtonVisible = false
                 }
                 errorMessage.apply {
-                    title = "Ошибка"
-                    message = "Что то пощло не так, но что я тебе не скажу"
+                    title = "Не удалось авторизоваться"
+                    message = null
                 }
             }
         )
@@ -48,7 +46,7 @@ class LoginView: VerticalLayout(), BeforeEnterObserver {
     override fun beforeEnter(beforeEnterEvent: BeforeEnterEvent) {
         if (beforeEnterEvent.location.queryParameters.parameters.containsKey("error")) {
             loginForm.isError = true
-        } //else UI.getCurrent().navigate(MainView::class.java)
+        }
     }
 
 }
