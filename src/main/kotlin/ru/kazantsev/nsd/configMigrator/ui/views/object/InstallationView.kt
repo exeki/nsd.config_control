@@ -32,6 +32,7 @@ import ru.kazantsev.nsd.configMigrator.data.model.enums.ConfigBackupType
 import ru.kazantsev.nsd.configMigrator.data.repo.*
 import ru.kazantsev.nsd.configMigrator.services.ConfigBackupService
 import ru.kazantsev.nsd.configMigrator.services.InstallationService
+import ru.kazantsev.nsd.configMigrator.services.SecurityService
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 import ru.kazantsev.nsd.configMigrator.ui.components.*
 import ru.kazantsev.nsd.configMigrator.ui.utils.DateTimeFormatUtils.Companion.format
@@ -50,7 +51,8 @@ class InstallationView(
     private val configBackupRepo: ConfigBackupRepo,
     private val migrationPathRepo: MigrationPathRepo,
     private val installationGroupRepo: InstallationGroupRepo,
-    private val migrationLogRepo: MigrationLogRepo
+    private val migrationLogRepo: MigrationLogRepo,
+    private val securityService: SecurityService
 ) : VerticalLayout(), HasUrlParameter<Long> {
 
     private lateinit var installation: Installation
@@ -99,12 +101,6 @@ class InstallationView(
                                             value = installation.host
                                             binder.forField(this).asRequired().bind(Installation::host.name)
                                         },
-                                        TextField("Ключ").apply {
-                                            setSizeFull()
-                                            isRequiredIndicatorVisible = true
-                                            value = installation.accessKey
-                                            binder.forField(this).asRequired().bind(Installation::accessKey.name)
-                                        },
                                         MultiSelectComboBox<InstallationGroup>("Группы").apply {
                                             setSizeFull()
                                             setItems(installationGroupRepo.findAll().toList())
@@ -124,7 +120,7 @@ class InstallationView(
                                                     if (!binder.writeBeanIfValid(installation)) Notification.show("Пожалуйста, заполните все обязательные поля!")
                                                     else {
                                                         try {
-                                                            installationService.updateInstallation(installation)
+                                                            installationService.updateInstallation(installation, securityService.authenticatedUser!!)
                                                             dialog.close()
                                                             UI.getCurrent().page.reload()
                                                             Notification.show("Инсталляция \"${installation.host}\" успешно сохранена.")
@@ -201,7 +197,8 @@ class InstallationView(
                                                                 installation,
                                                                 overrideAllField.value,
                                                                 fromBackupField.value,
-                                                                toBackupField.value
+                                                                toBackupField.value,
+                                                                securityService.authenticatedUser!!
                                                             )
                                                             if (toBackupField.value) {
                                                                 configBackupDataProvider.items.add(log.toBackup)
@@ -271,7 +268,8 @@ class InstallationView(
                                                                 installationField.value,
                                                                 overrideAllField.value,
                                                                 fromBackupField.value,
-                                                                toBackupField.value
+                                                                toBackupField.value,
+                                                                securityService.authenticatedUser!!
                                                             )
                                                             if (fromBackupField.value) {
                                                                 configBackupDataProvider.items.add(log.fromBackup)
@@ -324,7 +322,8 @@ class InstallationView(
                                                         try {
                                                             var backup = configBackupService.fetchAndCreateBackup(
                                                                 installation,
-                                                                ConfigBackupType.HAND
+                                                                ConfigBackupType.HAND,
+                                                                securityService.authenticatedUser!!
                                                             )
                                                             backup.note = noteField.value
                                                             backup.key = keyField.value
@@ -477,7 +476,6 @@ class InstallationView(
                             PropertyField("Дата изменения", installation.lastModifiedDate),
                             PropertyField("HTTP Protocol", installation.protocol),
                             PropertyField("Host", installation.host),
-                            PropertyField("Ключ доступа", installation.accessKey),
                             PropertyField("Ключевая", installation.important),
                             PropertyField("Версия приложения", installation.appVersion),
                             PropertyField("Версия Groovy", installation.groovyVersion),

@@ -56,12 +56,24 @@ class User() : AbstractEntity(), UserDetails {
         return authorities
     }
 
+    fun setAuthorities(authorities: MutableSet<UserAuthority>) {
+        this.authorities = authorities
+    }
+
     override fun getPassword(): String {
         return password
     }
 
+    fun setPassword(password: String) {
+        this.password = password
+    }
+
     override fun getUsername(): String {
         return username
+    }
+
+    fun setUsername(username: String) {
+        this.username = username
     }
 
     override fun isEnabled(): Boolean = archived

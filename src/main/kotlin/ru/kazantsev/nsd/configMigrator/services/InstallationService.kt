@@ -6,49 +6,49 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.kazantsev.nsd.basic_api_connector.Connector
 import ru.kazantsev.nsd.basic_api_connector.ConnectorParams
-import ru.kazantsev.nsd.configMigrator.data.model.Installation
-import ru.kazantsev.nsd.configMigrator.data.model.MigrationLog
-import ru.kazantsev.nsd.configMigrator.data.model.MigrationPath
+import ru.kazantsev.nsd.configMigrator.data.model.*
 import ru.kazantsev.nsd.configMigrator.data.model.enums.ConfigBackupType
 import ru.kazantsev.nsd.configMigrator.data.model.enums.MigrationState
-import ru.kazantsev.nsd.configMigrator.data.repo.InstallationRepo
-import ru.kazantsev.nsd.configMigrator.data.repo.MigrationLogRepo
-import ru.kazantsev.nsd.configMigrator.data.repo.MigrationPathRepo
+import ru.kazantsev.nsd.configMigrator.data.repo.*
 import java.net.SocketTimeoutException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class InstallationService(
     val installationRepo: InstallationRepo,
     val connectorService: ConnectorService,
     val migrationLogRepo: MigrationLogRepo,
-    val cbService: ConfigBackupService,
-    val migrationPathRepo: MigrationPathRepo
+    val migrationPathRepo: MigrationPathRepo,
+    val configBackupRepo: ConfigBackupRepo,
+    val dbFileRepo: DBFileRepo
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(InstallationService::class.java)
 
-    fun getConnectorParamsForInstallation(installation: Installation): ConnectorParams {
-        return ConnectorParams(
-            installation.host,
-            installation.protocol,
-            installation.host,
-            installation.accessKey,
-            true
-        )
-    }
-
-    fun getConnectorForInstallation(installation: Installation): Connector {
-        val params = getConnectorParamsForInstallation(installation)
-        val con = Connector(params)
-        return con
-    }
-
     @Transactional
-    fun updateInstallation(inst: Installation): Installation {
-        val con = connectorService.getConnectorForInstallation(inst)
+    fun updateInstallation(inst: Installation, user : User): Installation {
+        val con = connectorService.getConnectorForInstallation(inst, user)
         inst.appVersion = con.version()
         inst.groovyVersion = con.groovyVersion()
         return installationRepo.save(inst)
+    }
+
+    fun getNameForBackup(inst: Installation): String {
+        return inst.host + '_' + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+    }
+
+    @Transactional
+    fun fetchAndCreateBackup(inst: Installation, type: ConfigBackupType, user : User): ConfigBackup {
+        val con = connectorService.getConnectorForInstallation(inst, user)
+        return fetchAndCreateBackup(inst, type, con)
+    }
+
+    @Transactional
+    fun fetchAndCreateBackup(inst: Installation, type: ConfigBackupType, con : Connector): ConfigBackup {
+        val conf = con.metainfo()
+        val file = dbFileRepo.save(DBFile(getNameForBackup(inst), "application/xml", conf.toByteArray()))
+        return configBackupRepo.save(ConfigBackup(inst, type, file))
     }
 
     @Transactional
@@ -57,17 +57,19 @@ class InstallationService(
         to: Installation,
         overrideAll: Boolean,
         fromBackup: Boolean,
-        toBackup: Boolean
+        toBackup: Boolean,
+        user : User
     ): MigrationLog {
         val log = MigrationLog(from, to, overrideAll)
         try {
-            val toCon = connectorService.getConnectorForInstallation(to)
+            val toCon = connectorService.getConnectorForInstallation(to, user)
+            val fromCon = connectorService.getConnectorForInstallation(from, user)
             val config: String?
             if (fromBackup) {
-                log.fromBackup = cbService.fetchAndCreateBackup(from, ConfigBackupType.DURING_MIGRATION_FROM)
+                log.fromBackup = fetchAndCreateBackup(from, ConfigBackupType.DURING_MIGRATION_FROM, fromCon)
                 config = log.fromBackup!!.configFile.getContentAsString()
-            } else config = connectorService.getConnectorForInstallation(from).metainfo()
-            if (toBackup) log.toBackup = cbService.fetchAndCreateBackup(to, ConfigBackupType.DURING_MIGRATION_TO)
+            } else config = fromCon.metainfo()
+            if (toBackup) log.toBackup = fetchAndCreateBackup(to, ConfigBackupType.DURING_MIGRATION_TO, toCon)
             try {
                 toCon.uploadMetainfo(config, 1000)
             } catch (ignored: SocketTimeoutException) {
@@ -85,13 +87,14 @@ class InstallationService(
     }
 
     @Transactional
-    fun startMigration(migrationPath: MigrationPath): MigrationLog {
+    fun startMigration(migrationPath: MigrationPath, user : User): MigrationLog {
         val log = startMigration(
             migrationPath.from,
             migrationPath.to,
             migrationPath.overrideAll,
             migrationPath.fromBackup,
-            migrationPath.toBackup
+            migrationPath.toBackup,
+            user
         )
         migrationPath.lastLog = log
         migrationPathRepo.save(migrationPath)

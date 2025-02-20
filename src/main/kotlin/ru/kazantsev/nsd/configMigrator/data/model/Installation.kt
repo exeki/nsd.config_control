@@ -16,7 +16,7 @@ class Installation() : AbstractEntity() {
     var host: String = ""
     @NotBlank
     //TODO каждому пользователю свой ключ до конкретной инсталляции
-    var accessKey: String = ""
+    //var accessKey: String = ""
     var appVersion: String? = null
     var groovyVersion: String? = null
     var important : Boolean = false
@@ -27,11 +27,11 @@ class Installation() : AbstractEntity() {
     constructor(
         protocol: String,
         host: String,
-        accessKey: String
+        //accessKey: String
     ) : this() {
         this.protocol = protocol
         this.host = host
-        this.accessKey = accessKey
+        //this.accessKey = accessKey
     }
 
 }

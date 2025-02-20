@@ -51,7 +51,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.vaadin:vaadin-spring-boot-starter")
-    implementation("ru.kazantsev.nsd:basic_api_connector:1.1.1")
+    implementation("ru.kazantsev.nsd:basic_api_connector:1.2.1")
 
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

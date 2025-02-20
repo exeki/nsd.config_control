@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import ru.kazantsev.nsd.configMigrator.data.model.ConfigBackup
 import ru.kazantsev.nsd.configMigrator.data.model.DBFile
 import ru.kazantsev.nsd.configMigrator.data.model.Installation
+import ru.kazantsev.nsd.configMigrator.data.model.User
 import ru.kazantsev.nsd.configMigrator.data.model.enums.ConfigBackupType
 import ru.kazantsev.nsd.configMigrator.data.repo.ConfigBackupRepo
 import ru.kazantsev.nsd.configMigrator.data.repo.DBFileRepo
@@ -24,8 +25,8 @@ class ConfigBackupService(
     }
 
     @Transactional
-    fun fetchAndCreateBackup(inst: Installation, type: ConfigBackupType): ConfigBackup {
-        val con = connectorService.getConnectorForInstallation(inst)
+    fun fetchAndCreateBackup(inst: Installation, type: ConfigBackupType, user : User): ConfigBackup {
+        val con = connectorService.getConnectorForInstallation(inst, user)
         val conf = con.metainfo()
         val file = dbFileRepo.save(DBFile(getNameForBackup(inst), "application/xml", conf.toByteArray()))
         return configBackupRepo.save(ConfigBackup(inst, type, file))

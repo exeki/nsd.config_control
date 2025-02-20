@@ -26,6 +26,7 @@ import ru.kazantsev.nsd.configMigrator.data.model.InstallationGroup
 import ru.kazantsev.nsd.configMigrator.data.repo.InstallationGroupRepo
 import ru.kazantsev.nsd.configMigrator.data.repo.InstallationRepo
 import ru.kazantsev.nsd.configMigrator.services.InstallationService
+import ru.kazantsev.nsd.configMigrator.services.SecurityService
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 import ru.kazantsev.nsd.configMigrator.ui.components.FormErrorNotification
 import ru.kazantsev.nsd.configMigrator.ui.components.InstGroupSpan
@@ -39,7 +40,8 @@ import ru.kazantsev.nsd.configMigrator.ui.views.`object`.InstallationView
 class InstallationListView(
     private val installationRepo: InstallationRepo,
     private val installationService: InstallationService,
-    private val installationGroupRepo: InstallationGroupRepo
+    private val installationGroupRepo: InstallationGroupRepo,
+    private val securityService: SecurityService
 ) : VerticalLayout() {
 
     private var showArchived = false
@@ -258,11 +260,6 @@ class InstallationListView(
                                             isRequiredIndicatorVisible = true
                                             binder.forField(this).asRequired().bind(Installation::host.name)
                                         },
-                                        TextField("Ключ").apply {
-                                            setSizeFull()
-                                            isRequiredIndicatorVisible = true
-                                            binder.forField(this).asRequired().bind(Installation::accessKey.name)
-                                        },
                                         MultiSelectComboBox<InstallationGroup>("Группы").apply {
                                             setSizeFull()
                                             setItems(installationGroupRepo.findAll().toList())
@@ -280,7 +277,7 @@ class InstallationListView(
                                                 else {
                                                     try {
                                                         installation =
-                                                            installationService.updateInstallation(installation)
+                                                            installationService.updateInstallation(installation, securityService.authenticatedUser!!)
                                                         installationGridDataProvider.items.add(installation)
                                                         installationGridDataProvider.refreshAll()
                                                         dialog.close()
@@ -315,7 +312,7 @@ class InstallationListView(
                                 var updated = 0
                                 installationGrid.selectedItems.forEach {
                                     try {
-                                        installationService.updateInstallation(it)
+                                        installationService.updateInstallation(it, securityService.authenticatedUser!!)
                                         updated++
                                     } catch (e: Exception) {
                                         Notification.show("Не удалось обновить инсталлцию \"${it.host}\": ${e.message}")

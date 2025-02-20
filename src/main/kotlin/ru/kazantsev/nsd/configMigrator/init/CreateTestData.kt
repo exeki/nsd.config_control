@@ -50,26 +50,23 @@ class CreateTestData(
 
             val inst1 = Installation(
                 "https",
-                "nsd1.exeki.local",
-                "4deb6225-c637-44d7-8f21-27fa2e55d494"
+                "nsd1.exeki.local"
             )
             inst1.important = true
             inst1.groups.addAll(groups)
             val inst2 = Installation(
                 "https",
-                "nsd2.exeki.local",
-                "48565970-6d64-438b-a025-bad3275c50e5"
+                "nsd2.exeki.local"
             )
             inst2.groups.addAll(groups.take(groups.size - 1))
             val inst3 = Installation(
                 "https",
-                "nsd3.exeki.local",
-                "a3ae3f8c-33f7-43bd-bcbc-44fefaa39e35"
+                "nsd3.exeki.local"
             )
             inst3.groups.addAll(groups.take(groups.size - 2))
-            installationService.updateInstallation(inst1)
-            installationService.updateInstallation(inst2)
-            installationService.updateInstallation(inst3)
+            installationRepo.save(inst1)
+            installationRepo.save(inst2)
+            installationRepo.save(inst3)
         }
     }
 }
