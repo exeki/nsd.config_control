@@ -1,0 +1,17 @@
+{
+  "frontendFolder": "C:/projects/jvm/nsd.config_migrator_ui/./src/main/frontend",
+  "themeFolder": "themes",
+  "themeResourceFolder": "C:/projects/jvm/nsd.config_migrator_ui/./src/main/frontend/generated/jar-resources",
+  "staticOutput": "C:/projects/jvm/nsd.config_migrator_ui/target/classes/META-INF/VAADIN/webapp/VAADIN/static",
+  "generatedFolder": "generated",
+  "statsOutput": "C:\\projects\\jvm\\nsd.config_migrator_ui\\target\\classes\\META-INF\\VAADIN\\config",
+  "frontendBundleOutput": "C:\\projects\\jvm\\nsd.config_migrator_ui\\target\\classes\\META-INF\\VAADIN\\webapp",
+  "devBundleOutput": "C:/projects/jvm/nsd.config_migrator_ui/target/dev-bundle/webapp",
+  "devBundleStatsOutput": "C:/projects/jvm/nsd.config_migrator_ui/target/dev-bundle/config",
+  "jarResourcesFolder": "C:/projects/jvm/nsd.config_migrator_ui/./src/main/frontend/generated/jar-resources",
+  "themeName": "",
+  "clientServiceWorkerSource": "C:\\projects\\jvm\\nsd.config_migrator_ui\\target\\sw.ts",
+  "pwaEnabled": false,
+  "offlineEnabled": false,
+  "offlinePath": "'offline.html'"
+}
