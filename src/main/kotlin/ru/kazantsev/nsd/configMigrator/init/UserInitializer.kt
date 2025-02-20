@@ -35,7 +35,7 @@ class UserInitializer(
         return mutableListOf(
             User().apply {
                 username = "admin"
-                password = passwordEncoder.encode("admin")
+                password = "admin"
                 middleName = "Админович"
                 lastName = "Админов"
                 firstName = "Админ"
@@ -54,7 +54,14 @@ class UserInitializer(
 
     fun createUsers() {
         getUsersForCreate().forEach {
-            if (userRepo.findByUsername(it.username).isEmpty) userRepo.save(it)
+            val user = userRepo.findByUsername(it.username).orElse(null)
+            if(user == null) {
+                it.password = passwordEncoder.encode(it.password)
+                userRepo.save(it)
+            } else {
+                user.password = passwordEncoder.encode(it.password)
+                userRepo.save(user)
+            }
         }
     }
 

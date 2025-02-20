@@ -12,6 +12,7 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.html.H3
+import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -55,7 +56,6 @@ class UserView(
     private val userRepo: UserRepo,
     private val accessKeyRepo: AccessKeyRepo,
     private val installationRepo: InstallationRepo,
-    private val installationService: InstallationService,
     private val securityService: SecurityService,
     private val userAuthorityRepo: UserAuthorityRepo,
     private val passwordEncoder: PasswordEncoder,
@@ -78,10 +78,68 @@ class UserView(
         this.removeAll()
         this.user = obj
         this.accessKeyDataProvider = ListDataProvider(accessKeyRepo.findByUser(user))
+
         add(
             H2("${if (user.archived) "АРХИВ | " else ""}Пользователь \"${user.fullName}\""),
             HorizontalLayout().apply {
-                add(
+                if (securityService.isUser(user) || securityService.isAdmin) add(
+                    Button("Сменить пароль").apply {
+                        addClickListener {
+                            val dialog = Dialog()
+                            val errorContainer = FormErrorNotification()
+                            val oldPassField = PasswordField("Старый пароль").apply {
+                                setSizeFull()
+                                isRequiredIndicatorVisible = true
+                            }
+                            val newPassField = PasswordField("Новый пароль").apply {
+                                setSizeFull()
+                                isRequiredIndicatorVisible = true
+                            }
+                            dialog.apply {
+                                add(
+                                    FormLayout(
+                                        VerticalLayout(
+                                            H3("Сменить пароль"),
+                                            errorContainer,
+                                            if (!securityService.isAdmin) oldPassField else Span(),
+                                            newPassField,
+                                            HorizontalLayout(
+                                                Button("Сохранить").apply {
+                                                    addClickListener {
+                                                        if ((!securityService.isAdmin && oldPassField.value == null) || newPassField.value == null) {
+                                                            errorContainer.show("Пожалуйста, заполните пароли")
+                                                        } else {
+                                                            val oldPasswordIsOk = passwordEncoder.matches(
+                                                                oldPassField.value,
+                                                                user.password
+                                                            ) || securityService.isAdmin
+                                                            if (!oldPasswordIsOk) errorContainer.show("Старый пароль не подходит")
+                                                            else {
+                                                                try {
+                                                                    user.password =
+                                                                        passwordEncoder.encode(newPassField.value)
+                                                                    userRepo.save(user)
+                                                                    dialog.close()
+                                                                    Notification.show("Пароль изменен.")
+                                                                } catch (e: Exception) {
+                                                                    errorContainer.show("Не удалось сменить пароль: " + e.message)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                Button("Отменить") { dialog.close() }
+                                            )
+                                        )
+                                    ).apply { style.setMinWidth("500px") }
+                                )
+                            }
+                            dialog.open()
+                        }
+
+                    }
+                )
+                if (securityService.isAdmin) add(
                     Button("Редактировать").apply {
                         addClickListener {
                             val dialog = Dialog()
@@ -148,61 +206,6 @@ class UserView(
                             }
                             dialog.open()
                         }
-                    },
-                    Button("Сменить пароль").apply {
-                        addClickListener {
-                            val dialog = Dialog()
-                            val errorContainer = FormErrorNotification()
-                            val oldPassField = PasswordField("Старый пароль").apply {
-                                setSizeFull()
-                                isRequiredIndicatorVisible = true
-                            }
-                            val newPassField = PasswordField("Новый пароль").apply {
-                                setSizeFull()
-                                isRequiredIndicatorVisible = true
-                            }
-                            dialog.apply {
-                                add(
-                                    FormLayout(
-                                        VerticalLayout(
-                                            H3("Сменить пароль"),
-                                            errorContainer,
-                                            oldPassField,
-                                            newPassField,
-                                            HorizontalLayout(
-                                                Button("Сохранить").apply {
-                                                    addClickListener {
-                                                        if (oldPassField.value == null || newPassField.value == null) {
-                                                            errorContainer.show("Пожалуйста, заполните пароли")
-                                                        } else {
-                                                            val oldPasswordIsOk = passwordEncoder.matches(
-                                                                oldPassField.value,
-                                                                user.password
-                                                            )
-                                                            if (!oldPasswordIsOk) errorContainer.show("Старый пароль не подходит")
-                                                            else {
-                                                                try {
-                                                                    user.password =
-                                                                        passwordEncoder.encode(newPassField.value)
-                                                                    userRepo.save(user)
-                                                                    dialog.close()
-                                                                    Notification.show("Пароль изменен.")
-                                                                } catch (e: Exception) {
-                                                                    errorContainer.show("Не удалось сменить пароль: " + e.message)
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                Button("Отменить") { dialog.close() }
-                                            )
-                                        )
-                                    ).apply { style.setMinWidth("500px") }
-                                )
-                            }
-                            dialog.open()
-                        }
-
                     },
                     if (user.archived) Button("Восстановить из архива").apply {
                         addClickListener {
@@ -281,7 +284,8 @@ class UserView(
                     Details(H3("Ключи")).apply {
                         style.setWidth("60%")
                         isOpened = true
-                        add(
+
+                        if (securityService.isUser(user) || securityService.isAdmin) add(
                             Button("Добавить").apply {
                                 addClickListener {
                                     val dialog = Dialog()
@@ -362,7 +366,10 @@ class UserView(
                                     )
                                     dialog.open()
                                 }
-                            },
+                            }
+                        )
+
+                        add(
                             Grid(AccessKey::class.java).apply {
                                 setSizeFull()
                                 removeAllColumns()
@@ -371,7 +378,7 @@ class UserView(
                                 addColumn { format(it.date) }.setHeader("Годен до")
                                 isAllRowsVisible = true
                                 dataProvider = accessKeyDataProvider
-                                addComponentColumn { item ->
+                                if (securityService.isUser(user) || securityService.isAdmin) addComponentColumn { item ->
                                     HorizontalLayout(
                                         Button("Удалить").apply {
                                             addThemeVariants(ButtonVariant.LUMO_ERROR)

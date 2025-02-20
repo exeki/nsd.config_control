@@ -8,7 +8,6 @@ import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H3
-import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
@@ -22,8 +21,6 @@ import com.vaadin.flow.spring.annotation.UIScope
 import com.vaadin.flow.spring.annotation.VaadinSessionScope
 import jakarta.annotation.security.PermitAll
 import org.springframework.security.crypto.password.PasswordEncoder
-import ru.kazantsev.nsd.configMigrator.data.model.Installation
-import ru.kazantsev.nsd.configMigrator.data.model.InstallationGroup
 import ru.kazantsev.nsd.configMigrator.data.model.User
 import ru.kazantsev.nsd.configMigrator.data.model.UserAuthority
 import ru.kazantsev.nsd.configMigrator.data.repo.UserAuthorityRepo
@@ -32,7 +29,6 @@ import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 import ru.kazantsev.nsd.configMigrator.ui.components.FormErrorNotification
 import ru.kazantsev.nsd.configMigrator.ui.views.`object`.UserView
 import ru.kazantsev.nsd.configMigrator.ui.utils.DateTimeFormatUtils.Companion.format
-import java.time.format.DateTimeFormatter
 
 @Route("users", layout = MainLayout::class)
 @UIScope
