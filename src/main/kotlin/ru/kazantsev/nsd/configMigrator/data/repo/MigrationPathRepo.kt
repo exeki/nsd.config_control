@@ -8,4 +8,5 @@ import ru.kazantsev.nsd.configMigrator.data.model.MigrationPath
 interface MigrationPathRepo : PagingAndSortingRepository<MigrationPath, Long>, CrudRepository<MigrationPath, Long> {
     fun findByFrom(from : Installation): List<MigrationPath>
     fun findByTo(from : Installation): List<MigrationPath>
+    fun findByArchivedIs(archived: Boolean): List<MigrationPath>
 }

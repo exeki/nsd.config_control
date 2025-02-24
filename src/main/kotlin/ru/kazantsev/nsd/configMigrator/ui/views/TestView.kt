@@ -33,12 +33,9 @@ class TestView : VerticalLayout() {
 
     val tree = TreeGrid<Installation>()
 
-
-
     init {
 
         val details = Details(H3("СУПЕРБОЛШОЙ"), Span("Содержимое компонента"))
-
 
         // Кнопка для управления состоянием Details
         val toggleButton = Button(
@@ -46,7 +43,6 @@ class TestView : VerticalLayout() {
         ) { event: ClickEvent<Button?>? ->
             details.isOpened = !details.isOpened // Переключаем состояние
         }
-
 
         // Добавляем компоненты на layout
         add(details, toggleButton)

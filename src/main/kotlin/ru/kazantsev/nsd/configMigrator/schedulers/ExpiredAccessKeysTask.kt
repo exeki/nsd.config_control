@@ -7,10 +7,10 @@ import ru.kazantsev.nsd.configMigrator.data.repo.AccessKeyRepo
 import java.time.LocalDateTime
 
 @Service
-class ExpiredAccessKeys (
+class ExpiredAccessKeysTask (
     val accessKeyRepo: AccessKeyRepo
 ) {
-    private val log = LoggerFactory.getLogger(ExpiredAccessKeys::class.java)
+    private val log = LoggerFactory.getLogger(ExpiredAccessKeysTask::class.java)
 
     @Scheduled(fixedRate = 60000)
     fun scheduledTask() {

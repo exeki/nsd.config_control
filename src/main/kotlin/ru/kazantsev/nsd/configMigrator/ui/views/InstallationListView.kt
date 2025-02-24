@@ -21,6 +21,7 @@ import com.vaadin.flow.router.Route
 import com.vaadin.flow.spring.annotation.UIScope
 import com.vaadin.flow.spring.annotation.VaadinSessionScope
 import jakarta.annotation.security.PermitAll
+import ru.kazantsev.nsd.basic_api_connector.HttpException
 import ru.kazantsev.nsd.configMigrator.data.model.Installation
 import ru.kazantsev.nsd.configMigrator.data.model.InstallationGroup
 import ru.kazantsev.nsd.configMigrator.data.repo.InstallationGroupRepo
@@ -276,17 +277,21 @@ class InstallationListView(
                                                 if (!binder.writeBeanIfValid(installation)) Notification.show("Пожалуйста, заполните все обязательные поля!")
                                                 else {
                                                     try {
-                                                        installation =
-                                                            installationService.updateInstallation(installation, securityService.authenticatedUser!!)
+                                                        installation = installationService.updateInstallation(
+                                                            installation,
+                                                            securityService.authenticatedUser!!
+                                                        )
                                                         installationGridDataProvider.items.add(installation)
                                                         installationGridDataProvider.refreshAll()
                                                         dialog.close()
                                                         Notification.show("Инсталляция \"${installation.host}\" успешно сохранена.")
-                                                    } catch (e: Exception) {
+                                                    } catch (e: HttpException) {
                                                         errorContainer.show(
                                                             "Не удалось связаться с инсталляцией ${installation.host} " +
                                                                     "для получения информации о инсталляции: ${e.message}"
                                                         )
+                                                    } catch (e: Exception) {
+                                                        errorContainer.show("Произошла ошибка: ${e.message}")
                                                     }
                                                 }
                                             },

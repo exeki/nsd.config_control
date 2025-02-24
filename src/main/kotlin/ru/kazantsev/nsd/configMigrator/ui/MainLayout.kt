@@ -1,5 +1,6 @@
 package ru.kazantsev.nsd.configMigrator.ui
 
+import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.applayout.AppLayout
 import com.vaadin.flow.component.applayout.DrawerToggle
 import com.vaadin.flow.component.button.Button
@@ -15,6 +16,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility
 import ru.kazantsev.nsd.configMigrator.services.SecurityService
 import ru.kazantsev.nsd.configMigrator.ui.components.BoldSpan
 import ru.kazantsev.nsd.configMigrator.ui.views.*
+import ru.kazantsev.nsd.configMigrator.ui.views.`object`.UserView
 
 class MainLayout(
     private val securityService: SecurityService
@@ -48,13 +50,14 @@ class MainLayout(
                     this.justifyContentMode = FlexComponent.JustifyContentMode.END
                     val user = securityService.authenticatedUser
                     if (user != null) {
-                        val span = BoldSpan(user.fullName)
-                        this.add(span)
-                        setAlignSelf(FlexComponent.Alignment.CENTER, span)
-                        val logout = Button("Выйти") { securityService.logout() }
-                        this.add(logout)
-                        setAlignSelf(FlexComponent.Alignment.CENTER, logout)
+                        val link = if (user.id != null) RouterLink(user.fullName, UserView::class.java, user.id)
+                        else BoldSpan(user.fullName)
+                        this.add(link)
+                        setAlignSelf(FlexComponent.Alignment.CENTER, link)
                     }
+                    val logout = Button("Выйти") { securityService.logout() }
+                    this.add(logout)
+                    setAlignSelf(FlexComponent.Alignment.CENTER, logout)
                 }
             )
 
@@ -68,12 +71,10 @@ class MainLayout(
             VerticalLayout(
                 RouterLink("Главная", MainView::class.java),
                 RouterLink("Список инсталляций", InstallationListView::class.java),
-                RouterLink("Пути миграций TODO", MainView::class.java),
-                RouterLink("Миграции в процессе TODO а надо ли?", MainView::class.java),
-                RouterLink("Ключевые бекапы TODO", MainView::class.java),
-                RouterLink("Планировщики TODO", SchedulerListView::class.java),
-                RouterLink("Аудит лог TODO", MainView::class.java),
-                RouterLink("Релизы и скрипты TODO", MainView::class.java),
+                RouterLink("Пути миграций", MigrationPathList::class.java),
+                RouterLink("Планировщики TODO", SchedulerListView::class.java), //TODO Планировщики
+                RouterLink("Аудит лог TODO", MainView::class.java), //TODO Аудит лог
+                RouterLink("Релизы и скрипты TODO", MainView::class.java), //TODO Релизы и скрипты
                 RouterLink("Пользователи", UsersListView::class.java),
                 RouterLink("ТЕСТ", TestView::class.java),
             )

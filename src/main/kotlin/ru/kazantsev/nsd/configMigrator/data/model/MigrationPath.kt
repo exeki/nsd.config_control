@@ -6,15 +6,15 @@ import jakarta.persistence.ManyToOne
 import jakarta.validation.constraints.NotNull
 
 @Entity
-class MigrationPath () : AbstractEntity() {
+class MigrationPath() : AbstractEntity() {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    lateinit var from: Installation
+    var from: Installation = Installation()
     var fromBackup: Boolean = false
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    lateinit var to: Installation
+    var to: Installation = Installation()
     var toBackup: Boolean = false
     var overrideAll: Boolean = false
 
