@@ -1,0 +1,1 @@
+return new Date().parse('dd.MM.yyyy HH:mm:ss.SSS', '%date').format('dd.MM.yyyy HH:mm:ss.SSS')

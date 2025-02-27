@@ -1,11 +1,8 @@
 package ru.kazantsev.nsd.configMigrator.ui.views
 
-import com.vaadin.flow.component.ClickEvent
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
-import com.vaadin.flow.component.details.Details
 import com.vaadin.flow.component.html.H3
-import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -19,7 +16,8 @@ import ru.kazantsev.nsd.configMigrator.data.repo.UserRepo
 import ru.kazantsev.nsd.configMigrator.services.ScriptExecutionService
 import ru.kazantsev.nsd.configMigrator.services.SecurityService
 import ru.kazantsev.nsd.configMigrator.services.scripts.GetCurrentInstallationTimeScriptTemplate
-import ru.kazantsev.nsd.configMigrator.services.scripts.Test1ScriptTemplate
+import ru.kazantsev.nsd.configMigrator.services.scripts.test.Test1ScriptTemplate
+import ru.kazantsev.nsd.configMigrator.services.scripts.test.Test2ScriptTemplate
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 
 
@@ -73,6 +71,21 @@ class TestView(
                         )
                         log.info(result)
                         Notification.show(result)
+                    },
+                    Button(Test2ScriptTemplate::class.java.simpleName) {
+                        val date = scriptExecutionService.executeScript(
+                            GetCurrentInstallationTimeScriptTemplate(),
+                            installation,
+                            user
+                        )
+                        log.info(date)
+                        val result = scriptExecutionService.executeScript(
+                            Test2ScriptTemplate(date),
+                            installation,
+                            user
+                        )
+                        log.info(result)
+                        Notification.show("дата: " + date + " паршенная: " + result)
                     }
                 )
             }
