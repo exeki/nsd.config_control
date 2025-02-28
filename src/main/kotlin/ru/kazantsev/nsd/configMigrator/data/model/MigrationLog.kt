@@ -32,16 +32,21 @@ class MigrationLog () : AbstractEntity() {
 
     var errorText: String? = null
 
-    constructor(from: Installation, to: Installation, overrideAll: Boolean) : this() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    var user : User? = null
+
+    constructor(from: Installation, to: Installation, overrideAll: Boolean, user : User) : this() {
         this.from = from
         this.to = to
         this.overrideAll = overrideAll
+        this.user = user
     }
 
-    constructor(migrationPath: MigrationPath) : this(
+    constructor(migrationPath: MigrationPath, user : User) : this(
         migrationPath.from,
         migrationPath.to,
-        migrationPath.overrideAll
+        migrationPath.overrideAll,
+        user
     )
 
 }

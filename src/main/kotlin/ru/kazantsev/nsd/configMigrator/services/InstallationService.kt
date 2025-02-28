@@ -60,7 +60,7 @@ class InstallationService(
         toBackup: Boolean,
         user : User
     ): MigrationLog {
-        val log = MigrationLog(from, to, overrideAll)
+        val log = MigrationLog(from, to, overrideAll, user)
         try {
             val toCon = connectorService.getConnectorForInstallation(to, user)
             val fromCon = connectorService.getConnectorForInstallation(from, user)
