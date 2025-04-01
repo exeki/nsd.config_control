@@ -15,7 +15,7 @@ class ExpiredAccessKeysTask (
     @Scheduled(fixedRate = 60000)
     fun scheduledTask() {
         log.info("Задача выполняется")
-        accessKeyRepo.findByDateIsBefore(LocalDateTime.now()).forEach{
+        accessKeyRepo.findByDateIsBeforeAndExpiredIs(LocalDateTime.now(), false).forEach{
             it.expired = true
             log.info("Ключ ${it.id} пользователя ${it.user.fullName} просрочен")
             accessKeyRepo.save(it)

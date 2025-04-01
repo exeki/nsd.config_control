@@ -11,4 +11,5 @@ interface AccessKeyRepo : PagingAndSortingRepository<AccessKey, Long>, CrudRepos
     fun findByUser(user: User): List<AccessKey>
     fun findByUserAndInstallationAndExpiredIsFalse(user: User, install: Installation):  List<AccessKey>
     fun findByDateIsBefore(date: LocalDateTime): List<AccessKey>
+    fun findByDateIsBeforeAndExpiredIs(date: LocalDateTime, expired : Boolean): List<AccessKey>
 }

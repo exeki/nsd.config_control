@@ -18,7 +18,8 @@ class ScriptExecutionService(
     fun executeScript(template: IScriptTemplate, installation: Installation, user: User): String {
         val con = connectorService.getConnectorForInstallation(installation, user)
         val script = template.getScriptContent()
-        log.info(script)
+        log.debug("Отправляю скрипт")
+        log.debug(script)
         return con.execFile(script)
     }
 

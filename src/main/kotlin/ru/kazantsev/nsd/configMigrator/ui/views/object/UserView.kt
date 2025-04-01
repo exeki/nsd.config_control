@@ -375,7 +375,13 @@ class UserView(
                                 removeAllColumns()
                                 addColumn(AccessKey::id).setHeader("ID")
                                 addColumn { it.installation.host }.setHeader("Инсталляция")
-                                addColumn { format(it.date) }.setHeader("Годен до")
+                                addComponentColumn {
+                                    Span(format(it.date)).apply {
+                                        this.style.setPadding("0px 6px").setBorderRadius("4px").setColor("white")
+                                        if (it.date > LocalDateTime.now()) this.style.setBackgroundColor("green")
+                                        else this.style.setBackgroundColor("red")
+                                    }
+                                }
                                 isAllRowsVisible = true
                                 dataProvider = accessKeyDataProvider
                                 if (securityService.isUser(user) || securityService.isAdmin) addComponentColumn { item ->

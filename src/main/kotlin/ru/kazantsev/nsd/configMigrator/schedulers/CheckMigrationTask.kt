@@ -22,15 +22,26 @@ class CheckMigrationTask(
 ) {
 
     companion object {
-        const val WAIT_PROCESS_IN_MINUTES : Long = 60
+        const val WAIT_PROCESS_IN_MINUTES: Long = 60
     }
 
     private val log = LoggerFactory.getLogger(CheckMigrationTask::class.java)
 
     @Scheduled(fixedRate = 60000)
+    @Transactional
     fun scheduledTask() {
-        //TODO получение всех логов в процессе
-        //обработка каждого с обработкой ошибок (вдруг соединение упало)
+        log.info("Запуск планировщика проверки логов миграции")
+        val send = migrationLogRepo.findByState(MigrationState.SENT)
+        send.forEach { migrationLog ->
+            log.info("Проверка лога отправленной ${migrationLog.id}")
+            checkSent(migrationLog)
+        }
+        val started = migrationLogRepo.findByState(MigrationState.STARTED)
+        started.forEach { migrationLog ->
+            log.info("Проверка лога начатой миграции ${migrationLog.id}")
+            checkStarted(migrationLog)
+        }
+        log.info("Проверка логов миграции завершена. Проверешено ${started.size + send.size}")
     }
 
     @Transactional
@@ -41,7 +52,7 @@ class CheckMigrationTask(
             migrationLog.user,
             MetainfoImportStartLogDto::class.java
         )
-        if(data.log != null) {
+        if (data.log != null) {
             val adminLog = AdminLog(data.log!!, migrationLog)
             adminLogRepo.save(adminLog)
             migrationLog.state = MigrationState.STARTED
@@ -52,19 +63,20 @@ class CheckMigrationTask(
         migrationLogRepo.save(migrationLog)
     }
 
-    fun checkStarted(migrationLog: MigrationLog){
+    @Transactional
+    fun checkStarted(migrationLog: MigrationLog) {
         val data = scriptExecutionService.executeScriptAndRead(
             GetMetainfoImportStartLogScriptTemplate(migrationLog.installationStartTime),
             migrationLog.to,
             migrationLog.user,
             MetainfoImportStartLogDto::class.java
         )
-        if(data.log != null) {
+        if (data.log != null) {
             val adminLog = AdminLog(data.log!!, migrationLog)
             adminLogRepo.save(adminLog)
             migrationLog.state = MigrationState.DONE
         } else {
-            if(migrationLog.createdDate > LocalDateTime.now().plusMinutes(WAIT_PROCESS_IN_MINUTES)) {
+            if (migrationLog.createdDate > LocalDateTime.now().plusMinutes(WAIT_PROCESS_IN_MINUTES)) {
                 migrationLog.state = MigrationState.LOST_PROCESS
                 migrationLog.errorText = "Ожидание лога заверщения процесса более ${WAIT_PROCESS_IN_MINUTES} минут."
             }

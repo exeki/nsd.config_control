@@ -78,6 +78,7 @@ class InstallationView(
             H2("${if (installation.archived) "АРХИВ | " else ""}Инсталляция \"${installation.host}\""),
             HorizontalLayout().apply {
                 add(
+                    //TODO загрузка конфы из файла
                     Button("Редактировать").apply {
                         addClickListener {
                             val dialog = Dialog()
@@ -551,7 +552,7 @@ class InstallationView(
                                     it.toBackup!!.id
                                 )
                             }.setHeader("Бекап")
-                            addColumn({ it.state.name }).setHeader("Статус")
+                            addColumn({ it.state.title }).setHeader("Статус")
                             this.dataProvider = migrationLogDataProvider
                             this.addItemClickListener { event ->
                                 UI.getCurrent().navigate(MigrationLogView::class.java, event.item.id)

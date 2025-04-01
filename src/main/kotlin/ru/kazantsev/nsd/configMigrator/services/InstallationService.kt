@@ -5,10 +5,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.kazantsev.nsd.basic_api_connector.Connector
-import ru.kazantsev.nsd.basic_api_connector.ConnectorParams
 import ru.kazantsev.nsd.configMigrator.data.model.*
 import ru.kazantsev.nsd.configMigrator.data.model.enums.ConfigBackupType
-import ru.kazantsev.nsd.configMigrator.data.model.enums.MigrationState
 import ru.kazantsev.nsd.configMigrator.data.repo.*
 import ru.kazantsev.nsd.configMigrator.services.scripts.GetCurrentInstallationTimeScriptTemplate
 import java.net.SocketTimeoutException
@@ -62,22 +60,37 @@ class InstallationService(
         toBackup: Boolean,
         user: User
     ): MigrationLog {
+        logger.info("Начинаю миграцию с ${from.host} на ${to.host}")
         val toCon = connectorService.getConnectorForInstallation(to, user)
         val fromCon = connectorService.getConnectorForInstallation(from, user)
+        logger.info("Коннекторы созданы")
         val config: String?
-        var fromBackupCong : ConfigBackup? = null
-        var toBackupCong : ConfigBackup? = null
+        var fromBackupCong: ConfigBackup? = null
+        var toBackupCong: ConfigBackup? = null
         if (fromBackup) {
+            logger.info("Делаю бекап инсталлции from")
             fromBackupCong = fetchAndCreateBackup(from, ConfigBackupType.DURING_MIGRATION_FROM, fromCon)
             config = fromBackupCong.configFile.getContentAsString()
-        } else config = fromCon.metainfo()
-        if (toBackup) toBackupCong = fetchAndCreateBackup(to, ConfigBackupType.DURING_MIGRATION_TO, toCon)
-        val installationDate: String = scriptExecutionService.executeScript(GetCurrentInstallationTimeScriptTemplate(), to, user)
-        try {
-            toCon.uploadMetainfo(config, 1000)
-        } catch (ignored: SocketTimeoutException) {
-            logger.info("Словил SocketTimeoutException при отправке метаинфы. This is fine...")
+        } else {
+            logger.info("Бекап инсталлции from не нужен")
+            config = fromCon.metainfo()
         }
+        if (toBackup) {
+            toBackupCong = fetchAndCreateBackup(to, ConfigBackupType.DURING_MIGRATION_TO, toCon)
+            logger.info("Делаю бекап инсталлции to")
+        } else logger.info("Бекап инсталляции to не требуется")
+        logger.info("Получаю текущую дату инсталляции")
+        val installationDate: String =
+            scriptExecutionService.executeScript(GetCurrentInstallationTimeScriptTemplate(), to, user)
+        logger.info("Текущая дата инсталляции $installationDate")
+        try {
+            logger.info("Отправляю конфигурацию")
+            toCon.uploadMetainfo(config, 1000)
+        } catch (e: RuntimeException) {
+            if (e.cause !is SocketTimeoutException) throw e
+            else logger.info("Словил SocketTimeoutException при отправке метаинфы. This is fine...")
+        }
+        logger.info("Создаю лог")
         val log = MigrationLog(from, to, overrideAll, installationDate, user).apply {
             this.fromBackup = fromBackupCong
             this.toBackup = toBackupCong
