@@ -32,6 +32,7 @@ import ru.kazantsev.nsd.configMigrator.data.model.enums.ConfigBackupType
 import ru.kazantsev.nsd.configMigrator.data.repo.*
 import ru.kazantsev.nsd.configMigrator.services.ConfigBackupService
 import ru.kazantsev.nsd.configMigrator.services.InstallationService
+import ru.kazantsev.nsd.configMigrator.services.ScriptExecutionService
 import ru.kazantsev.nsd.configMigrator.services.SecurityService
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 import ru.kazantsev.nsd.configMigrator.ui.components.*
@@ -52,7 +53,8 @@ class InstallationView(
     private val migrationPathRepo: MigrationPathRepo,
     private val installationGroupRepo: InstallationGroupRepo,
     private val migrationLogRepo: MigrationLogRepo,
-    private val securityService: SecurityService
+    private val securityService: SecurityService,
+    private val scriptExecutionService : ScriptExecutionService
 ) : VerticalLayout(), HasUrlParameter<Long> {
 
     private lateinit var installation: Installation

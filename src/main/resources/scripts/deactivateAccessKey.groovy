@@ -1,0 +1,2 @@
+api.auth.deactivateAccessKey("%accessKey")
+

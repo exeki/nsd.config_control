@@ -37,8 +37,9 @@ import ru.kazantsev.nsd.configMigrator.data.repo.InstallationRepo
 import ru.kazantsev.nsd.configMigrator.data.repo.UserAuthorityRepo
 import ru.kazantsev.nsd.configMigrator.data.repo.UserRepo
 import ru.kazantsev.nsd.configMigrator.services.ConnectorService
-import ru.kazantsev.nsd.configMigrator.services.InstallationService
+import ru.kazantsev.nsd.configMigrator.services.ScriptExecutionService
 import ru.kazantsev.nsd.configMigrator.services.SecurityService
+import ru.kazantsev.nsd.configMigrator.services.scripts.DeactivateAccessKeyScriptTemplate
 import ru.kazantsev.nsd.configMigrator.ui.MainLayout
 import ru.kazantsev.nsd.configMigrator.ui.components.FormErrorNotification
 import ru.kazantsev.nsd.configMigrator.ui.components.PropertyField
@@ -59,8 +60,11 @@ class UserView(
     private val securityService: SecurityService,
     private val userAuthorityRepo: UserAuthorityRepo,
     private val passwordEncoder: PasswordEncoder,
-    private val connectorService: ConnectorService
+    private val connectorService: ConnectorService,
+    private val scriptExecutionService: ScriptExecutionService
 ) : VerticalLayout(), HasUrlParameter<Long> {
+
+    //TODO транзакционал на все кнопки во всех вьюхах!!!
 
     private lateinit var user: User
 
@@ -390,10 +394,14 @@ class UserView(
                                             addThemeVariants(ButtonVariant.LUMO_ERROR)
                                             addClickListener {
                                                 try {
+                                                    if (!item.expired) scriptExecutionService.executeScript(
+                                                        DeactivateAccessKeyScriptTemplate(item.accessKey),
+                                                        item.installation,
+                                                        user
+                                                    )
                                                     accessKeyRepo.delete(item)
                                                     accessKeyDataProvider.items.remove(item)
                                                     accessKeyDataProvider.refreshAll()
-                                                    //TODO инвалидация ключа путем отправки скрипта на инсталляцию (если он еще активен)
                                                 } catch (e: Exception) {
                                                     Notification.show("Не удалось удалить ключ: ${e.message}")
                                                 }

@@ -20,6 +20,7 @@ class ScriptExecutionService(
         val script = template.getScriptContent()
         log.debug("Отправляю скрипт")
         log.debug(script)
+        //TODO тут создавать лог
         return con.execFile(script)
     }
 
